@@ -86,9 +86,9 @@ echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-
 
 ### Paso 1: Entorno de ejecución
 
-Se ha utilizado un ```Dockerfile``` personalizado para definir el entorno de ejecución de la función debido a las dependencias necesarias para OpenCV.
+Se ha utilizado la plantilla oficial de OpenFaaS python3-flask-debian, que permite trabajar con dependencias como OpenCV, Flask y Numpy de forma sencilla y sin necesidad de definir un Dockerfile personalizado.
 
-Se puede ver [aquí](./facesdetection-python/Dockerfile).
+Esta plantilla proporciona una base Debian con soporte para Flask, ideal para funciones que necesitan devolver imágenes procesadas.
 
 ### Paso 2: Autenticarse para subir y desplegar funciones
 
