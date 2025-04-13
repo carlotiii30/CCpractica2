@@ -8,7 +8,7 @@ Esta práctica tiene como objetivo desplegar una plataforma Functions-as-a-Servi
 
 ---
 
-## Instalación de herramientas necesarias:
+### Instalación de herramientas necesarias:
 
 ```bash
 brew install kubectl
@@ -19,7 +19,7 @@ brew install faas-cli
 
 ---
 
-## Paso 1: Iniciar Minikube
+### Paso 1: Iniciar Minikube
 
 Se ha iniciado el clúster de Kubernetes local con Docker como driver:
 
@@ -29,16 +29,16 @@ minikube start --driver=docker
 
 ---
 
-## Paso 2: Instalar OpenFaaS con Helm
+### Paso 2: Instalar OpenFaaS con Helm
 
-### 2.1. Añadir repositorio de OpenFaaS
+#### 2.1. Añadir repositorio de OpenFaaS
 
 ```bash
 helm repo add openfaas https://openfaas.github.io/faas-netes/
 helm repo update
 ```
 
-### 2.2. Crear los namespaces necesarios
+#### 2.2. Crear los namespaces necesarios
 
 ```bash
 kubectl create namespace openfaas
@@ -46,7 +46,7 @@ kubectl create namespace openfaas-fn
 ```
 
 
-### 2.3. Desplegar OpenFaaS
+#### 2.3. Desplegar OpenFaaS
 
 ```bash
 helm upgrade openfaas openfaas/openfaas \
@@ -59,25 +59,74 @@ helm upgrade openfaas openfaas/openfaas \
 
 ---
 
-## Paso 3: Acceder al portal de OpenFaaS
+### Paso 3: Acceder al portal de OpenFaaS
 
-### 3.1. Hacer port-forward al servicio gateway
+#### 3.1. Hacer port-forward al servicio gateway
 
 ```bash
 kubectl port-forward -n openfaas svc/gateway 8080:8080
 ```
 
-### 3.2. Acceder desde el navegador
+#### 3.2. Acceder desde el navegador
 
 [OpenFaaS Portal](http://127.0.0.1:8080)
 
 ---
 
-## Paso 4: Obtener credenciales de acceso
+### Paso 4: Obtener credenciales de acceso
 
 Usuario: ```admin```
 
 Contraseña: ```Obtener a través del comando de abajo```
 ```bash
 echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)
+```
+
+## Despliegue de función de reconocimiento facial (Faces Detection)
+
+### Paso 1: Entorno de ejecución
+
+Se ha utilizado un ```Dockerfile``` personalizado para definir el entorno de ejecución de la función debido a las dependencias necesarias para OpenCV.
+
+Se puede ver [aquí](./facesdetection-python/Dockerfile).
+
+### Paso 2: Autenticarse para subir y desplegar funciones
+
+#### 2.1. Hacer login en Docker.
+
+```bash
+docker login
+```
+
+#### 2.2. Hacer login en OpenFaaS
+
+```bash
+faas-cli login --gateway http://127.0.0.1:8080
+```
+
+### Paso 3: Construir, subir y desplegar la función
+
+```bash
+faas-cli up -f stack.yaml
+```
+
+### Paso 4: Acceder a la función
+
+Desde [OpenFaaS Portal](http://127.0.0.1:8080) podemos ejecutar la función.
+
+
+### Testear la función
+
+Test:
+
+```bash
+python3 facesdetection-python/handler_test.py
+```
+
+Probar desde terminal:
+```bash
+curl -X POST http://127.0.0.1:8080/function/facesdetection-python \
+     -H "Content-Type: text/plain" \
+     --data "https://upload.wikimedia.org/wikipedia/commons/3/37/Dagestani_man_and_woman.jpg" \
+     --output resultado.jpg
 ```
