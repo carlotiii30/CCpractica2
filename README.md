@@ -69,7 +69,7 @@ kubectl port-forward -n openfaas svc/gateway 8080:8080
 
 ### 3.2. Acceder desde el navegador
 
-(OpenFaaS Portal)[http://127.0.0.1:8080]
+[OpenFaaS Portal](http://127.0.0.1:8080)
 
 ---
 
@@ -77,7 +77,7 @@ kubectl port-forward -n openfaas svc/gateway 8080:8080
 
 Usuario: ```admin```
 
-Contraseña:
+Contraseña: ```Obtener a través del comando de abajo```
 ```bash
 echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)
 ```
