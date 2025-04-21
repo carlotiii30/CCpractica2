@@ -115,6 +115,19 @@ faas-cli up -f stack.yaml
 Desde [OpenFaaS Portal](http://127.0.0.1:8080) podemos ejecutar la función.
 
 
+### Detalles de la implementación
+
+La función ha sido implementada en Python utilizando la plantilla oficial python3-flask-debian de OpenFaaS. Utiliza OpenCV para detectar rostros en una imagen recibida mediante una URL.
+
+**Mejoras respecto a funciones básicas**:
+
+- Uso de Flask y Response: La función utiliza la respuesta nativa de Flask (flask.Response) para retornar directamente la imagen procesada como contenido binario (image/jpeg), en lugar de serializar los bytes como texto o base64, lo cual simplifica el consumo desde el cliente y mejora el rendimiento.
+
+- Control de errores robusto: En caso de error (por ejemplo, si la URL no es válida o la imagen no puede descargarse/procesarse), se devuelve un mensaje con el código de error 500, incluyendo el motivo exacto del fallo. Esto mejora la trazabilidad frente a funciones que solo devuelven None o errores genéricos.
+
+- Registro de la URL recibida: Se incluye un print() que muestra en logs qué URL se está procesando. Esto ha sido útil durante las pruebas para depurar errores.
+
+
 ### Testear la función
 
 Test:
