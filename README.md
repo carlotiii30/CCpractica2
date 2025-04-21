@@ -24,7 +24,7 @@ brew install faas-cli
 Se ha iniciado el clúster de Kubernetes local con Docker como driver:
 
 ```bash
-minikube start --driver=docker
+minikube start --driver=docker --addons=default-storageclass,storage-provisioner --extra-config=apiserver.enable-admission-plugins=""
 ```
 
 ---
@@ -101,7 +101,7 @@ docker login
 #### 2.2. Hacer login en OpenFaaS
 
 ```bash
-faas-cli login --gateway http://127.0.0.1:8080
+faas-cli login --gateway http://127.0.0.1:8080 --password $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)
 ```
 
 ### Paso 3: Construir, subir y desplegar la función
