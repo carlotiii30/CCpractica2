@@ -1,5 +1,7 @@
 # Práctica 2 – Reconocimiento Facial con Functions-as-a-Service (OpenFaaS)
 
+Repo en GitHub: https://github.com/carlotiii30/CCpractica2
+
 Sistema operativo utilizado: MacOS
 
 ## Despliegue de la plataforma OpenFaaS sobre Kubernetes (Minikube)
@@ -80,6 +82,35 @@ Usuario: ```admin```
 Contraseña: ```Obtener a través del comando de abajo```
 ```bash
 echo $(kubectl -n openfaas get secret basic-auth -o jsonpath="{.data.basic-auth-password}" | base64 --decode)
+```
+
+## Despliegue de funciones ya existentes desde el catálogo de OpenFaaS
+Antes de implementar nuestra función propia, también se han desplegado dos funciones existentes del catálogo de OpenFaaS como parte del análisis comparativo que solicita la práctica.
+
+### Paso 1: Comprobar que Minikube está iniciado y OpenFaaS funcionando
+```bash
+minikube start --driver=docker --addons=default-storageclass,storage-provisioner --extra-config=apiserver.enable-admission-plugins=""
+kubectl port-forward -n openfaas svc/gateway 8080:8080
+```
+
+### Paso 2: Desplegar las funciones
+```bash
+faas-cli store deploy face-detect-opencv
+faas-cli store deploy face-detect-pigo
+```
+
+### Paso 3: Probar las funciones
+```bash
+curl -X POST \
+     --data "https://upload.wikimedia.org/wikipedia/commons/3/37/Dagestani_man_and_woman.jpg" \
+     http://127.0.0.1:8080/function/face-detect-opencv \
+     --output resultado_opencv.jpg
+```
+```bash
+curl -X POST \
+     --data "https://upload.wikimedia.org/wikipedia/commons/3/37/Dagestani_man_and_woman.jpg" \
+     http://127.0.0.1:8080/function/face-detect-pigo \
+     --output resultado_pigo.jpg
 ```
 
 ## Despliegue de función de reconocimiento facial (Faces Detection)
